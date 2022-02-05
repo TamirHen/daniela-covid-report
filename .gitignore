@@ -132,5 +132,8 @@ dist
 # mac
 .DS_Store
 
+$ IDE
+.idea
+
 # csv
 *.csv
