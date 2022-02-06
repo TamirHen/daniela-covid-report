@@ -1,51 +1,30 @@
-const fetch = require('node-fetch');
-const {Headers} = fetch;
+const axios = require('axios');
+const qs = require('qs');
+
 
 const authenticate = async () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/x-www-form-urlencoded");
-
-    const urlencoded = new URLSearchParams();
-    urlencoded.append("username", process.env.USERNAME);
-    urlencoded.append("password", process.env.PASSWORD);
-    urlencoded.append("grant_type", "password");
-
-    const requestOptions = {
-        method: 'POST',
-        headers,
-        body: urlencoded,
-        redirect: 'follow'
+    const data = qs.stringify({
+        'username': process.env.API_USERNAME,
+        'password': process.env.API_PASSWORD,
+        'grant_type': 'password'
+    });
+    const config = {
+        method: 'post',
+        url: `${process.env.API_URL}/${process.env.ACCOUNT_NAME}/oauth2/token`,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: data
     };
-
     let response
     try {
-        response = await fetch(`${process.env.API_URL}/${process.env.ACCOUNT_NAME}/oauth2/token`, requestOptions)
+        response = await axios(config)
     } catch (error) {
         throw error
     }
-    return await response.json()
+    return response.data
 }
 
 module.exports = {
     authenticate,
 }
-// const data = qs.stringify({
-//     'username': process.env.USERNAME,
-//     'password': process.env.PASSWORD,
-//     'grant_type': 'password'
-// });
-// const config = {
-//     method: 'post',
-//     url: `${process.env.API_URL}/${process.env.ACCOUNT_NAME}/oauth2/token`,
-//     headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded'
-//     },
-//     data: data
-// };
-// let response
-// try {
-//     response = await axios(config)
-// } catch (error) {
-//     throw error
-// }
-// return response.data
